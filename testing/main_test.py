@@ -1,6 +1,8 @@
+import sys
+sys.path.append("../ISA") 
 import ImageSecurityAnalyser
 
-package_list = "/home/elena/Python/ImageSecurityAnalyser/packages"
+package_list = "./packages"
 fsroot = "/usr/bin"
 
 imageSecurityAnalyser = ImageSecurityAnalyser.ImageSecurityAnalyser()

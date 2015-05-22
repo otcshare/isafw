@@ -1,8 +1,14 @@
-#Compile flag alazyser plugin
+# Compile flag alazyser plugin
+# Functions get_files and get_security_flags are based on similar functions from build_comp Clear linux project
+
 import subprocess
 import os
+import stat
+from re import compile
+from re import sub
 
 CFChecker = None
+full_report = "./cfa_full_report"
 
 class ISA_CFChecker():    
     initialized = False
@@ -18,9 +24,11 @@ class ISA_CFChecker():
     def process_fsroot(self, fsroot_path):
         print fsroot_path
         if (self.initialized == True):
+            f = open(full_report,'w')
             self.files = self.find_files(fsroot_path)
-            print self.files
+            #print self.files
             for i in self.files:
+                real_file = i
                 if os.path.isfile(i):
                     # getting file type
                     cmd = ['file', '--mime-type', i]
@@ -36,7 +44,7 @@ class ISA_CFChecker():
                     if i == real_file:
                         name_field = i
                     else:
-                        name_field = i+" -> "+real_file
+                        name_field = i+" -> "+ real_file
                     # getting file size
                     size = os.path.getsize(real_file)
                     # checking file permissions
@@ -58,12 +66,17 @@ class ISA_CFChecker():
                         elif type.find("pdf") != -1:
                             sec_field = "File is pdf"
                         else:
-                            sec_field = get_security_flags(real_file)
+                            sec_field = self.get_security_flags(real_file)
+                            f.write(real_file + ": ")
+                            for s in sec_field:
+                                line = ' '.join(str(x) for x in s)
+                                f.write(line + ' ')
+                            f.write('\n')
                     else:
                         sec_field = "File is not binary"
                     # checking flags criteria
-                    print sec_field
-
+                    # print sec_field
+            f.close()
         else:
             print("Plugin hasn't initialized! Not performing the call.")
 
@@ -71,7 +84,7 @@ class ISA_CFChecker():
         list_of_files = []
         for (dirpath, dirnames, filenames) in os.walk(init_path):
             for f in filenames:
-                list_of_files.append(str(dirpath+"/"+f)[(len(init_path)-1):])
+                list_of_files.append(str(dirpath+"/"+f)[:])
         return list_of_files
 
     def get_security_flags(self, file_name):
@@ -93,14 +106,18 @@ class ISA_CFChecker():
 	        'No RUNPATH'      : 1
         }
         cmd = ['checksec.sh', '--file', file_name]
-        result = subprocess.check_output(cmd).decode("utf-8").split('\n')[1]
-        ansi_escape = compile(r'\x1b[^m]*m')
-        text = ansi_escape.sub('', result)
-        text2 = sub(r'\ \ \ *', ',', text).split(',')[:-1]
-        text = []
-        for t2 in text2:
-	        text.append((t2, SF[t2]))
-        return text
+        try:
+            result = subprocess.check_output(cmd).decode("utf-8").split('\n')[1]
+        except:
+            return "Not able to fetch flags"
+        else:
+            ansi_escape = compile(r'\x1b[^m]*m')
+            text = ansi_escape.sub('', result)
+            text2 = sub(r'\ \ \ *', ',', text).split(',')[:-1]
+            text = []
+            for t2 in text2:
+	            text.append((t2, SF[t2]))
+            return text
 
 
 #======== supported callbacks from ISA =============#
