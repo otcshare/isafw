@@ -1,6 +1,7 @@
 from glob import glob
 from keyword import iskeyword
 from os.path import dirname, join, split, splitext
+import sys
 
 basedir = dirname(__file__)
 
@@ -11,9 +12,8 @@ for name in glob(join(basedir, '*.py')):
         try:
             __import__(__name__+'.'+module)
         except:
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.warning('Ignoring exception while loading the %r plug-in.', module)
+            e = sys.exc_info()
+            print e
         else:
             __all__.append(module)
 __all__.sort()

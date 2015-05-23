@@ -9,9 +9,15 @@ from re import sub
 
 CFChecker = None
 full_report = "./cfa_full_report"
+problems_report = "./cfa_problems_report"
 
 class ISA_CFChecker():    
     initialized = False
+    no_relo = []
+    no_canary = []
+    no_pie = []
+    no_nx = []
+
     def __init__(self):
         # check that cve-check-tool is installed
         rc = subprocess.call(["which", "checksec.sh"])
@@ -22,9 +28,10 @@ class ISA_CFChecker():
             print("checksec tool is missing!")
             print("Please install it from http://www.trapkit.de/tools/checksec.html")
     def process_fsroot(self, fsroot_path):
-        print fsroot_path
+        #print fsroot_path
         if (self.initialized == True):
-            f = open(full_report,'w')
+            ffull_report = open(full_report,'w')
+            fproblems_report = open(problems_report,'w')
             self.files = self.find_files(fsroot_path)
             #print self.files
             for i in self.files:
@@ -67,16 +74,33 @@ class ISA_CFChecker():
                             sec_field = "File is pdf"
                         else:
                             sec_field = self.get_security_flags(real_file)
-                            f.write(real_file + ": ")
+                            ffull_report.write(real_file + ": ")
                             for s in sec_field:
                                 line = ' '.join(str(x) for x in s)
-                                f.write(line + ' ')
-                            f.write('\n')
+                                ffull_report.write(line + ' ')
+                            ffull_report.write('\n')
+                            
                     else:
                         sec_field = "File is not binary"
                     # checking flags criteria
-                    # print sec_field
-            f.close()
+                    #print sec_field
+            #print self.no_relo
+            #print self.no_canary
+            #print self.no_pie
+            fproblems_report.write("Files with no RELO: ")
+            for item in self.no_relo:
+                fproblems_report.write(item + ' ')
+            fproblems_report.write("\n\nFiles with no canary: ")
+            for item in self.no_canary:
+                fproblems_report.write(item + ' ')
+            fproblems_report.write("\n\nFiles with no PIE: ")
+            for item in self.no_pie:
+                fproblems_report.write(item + ' ')
+            fproblems_report.write("\n\nFiles with no NX: ")
+            for item in self.no_nx:
+                fproblems_report.write(item + ' ')
+            ffull_report.close()
+            fproblems_report.close()
         else:
             print("Plugin hasn't initialized! Not performing the call.")
 
@@ -116,9 +140,17 @@ class ISA_CFChecker():
             text2 = sub(r'\ \ \ *', ',', text).split(',')[:-1]
             text = []
             for t2 in text2:
-	            text.append((t2, SF[t2]))
+                if t2 == "No RELRO":
+                    self.no_relo.append(file_name[:])
+                elif t2 == "No canary found" :
+                    self.no_canary.append(file_name[:])
+                elif t2 == "No PIE" :
+                    self.no_pie.append(file_name[:])
+                elif t2 == "NX disabled" :
+                    self.no_nx.append(file_name[:])
+                text.append((t2, SF[t2]))               
             return text
-
+        return 
 
 #======== supported callbacks from ISA =============#
 

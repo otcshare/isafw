@@ -18,7 +18,7 @@ class ImageSecurityAnalyser:
                  register_plugin()
 
     def process_package(self, package_path):
-        print package_path
+        #print package_path
         for name in plugins.__all__:
             plugin = getattr(plugins, name)
             try:
@@ -32,7 +32,7 @@ class ImageSecurityAnalyser:
 
 
     def process_packages(self, packages_path):
-        print packages_path
+        #print packages_path
         for name in plugins.__all__:
             plugin = getattr(plugins, name)
             try:
@@ -44,7 +44,7 @@ class ImageSecurityAnalyser:
                  # try to call it, without catching any errors
                  process_packages(packages_path)
     def process_package_list(self, package_list):
-        print package_list
+        #print package_list
         for name in plugins.__all__:
             plugin = getattr(plugins, name)
             try:
@@ -57,7 +57,7 @@ class ImageSecurityAnalyser:
                  process_package_list(package_list)
 
     def process_fsroot(self, fsroot_path):
-        print fsroot_path
+        #print fsroot_path
         for name in plugins.__all__:
             plugin = getattr(plugins, name)
             try:
