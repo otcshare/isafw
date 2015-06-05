@@ -30,21 +30,20 @@ class ISA_LicenseChecker():
         print ISA_pkg.path_to_sources
         if (self.initialized == True):
             if (ISA_pkg.name and ISA_pkg.path_to_sources):
-                if (not ISA_pkg.license):
+                if (not ISA_pkg.licenses):
                     # need to determine the license itself first
                     if ( not ISA_pkg.source_files):
                         # need to build list of source files
                         ISA_pkg.source_files = self.find_files(ISA_pkg.path_to_sources)
-                        print ISA_pkg.source_files
+                        #print ISA_pkg.source_files
                     for i in ISA_pkg.source_files:
                         if (i.endswith(".spec")):
                             args = ("rpm", "-q", "--queryformat","%{LICENSE} ", "--specfile", i)
                             popen = subprocess.Popen(args, stdout=subprocess.PIPE)
                             popen.wait()
-                            ISA_pkg.license = popen.stdout.read()
-                            print ISA_pkg.license
-                licenses = ISA_pkg.license.split()
-                for l in licenses:                                               
+                            ISA_pkg.licenses = popen.stdout.read().split()
+                            #print ISA_pkg.licenses
+                for l in ISA_pkg.licenses:                                               
                     if (not self.check_license(l, flicenses) 
                     and not self.check_license(l, fapproved_non_osi)
                     and not self.check_exceptions(ISA_pkg.name, l, fexceptions)):

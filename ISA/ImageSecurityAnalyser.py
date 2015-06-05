@@ -9,8 +9,8 @@ import plugins
 class ISA_package:
     name = ""                     # pkg name (mandatory argument)
     version = ""                  # full version
-    licenses = ""                 # commaseparated string of licences for all subpackages
-    source_files = []             # array of strings of source files (tarball, patches, spec)
+    licenses = []                 # list of licences for all subpackages
+    source_files = []             # list of strings of source files (tarball, patches, spec)
     path_to_sources = ""          # path to the source files (mandatory argument)
 
 class ImageSecurityAnalyser:
