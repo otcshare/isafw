@@ -82,11 +82,6 @@ class ISA_CFChecker():
                             
                     else:
                         sec_field = "File is not binary"
-                    # checking flags criteria
-                    #print sec_field
-            #print self.no_relo
-            #print self.no_canary
-            #print self.no_pie
             fproblems_report.write("Files with no RELO: ")
             for item in self.no_relo:
                 fproblems_report.write(item + ' ')
