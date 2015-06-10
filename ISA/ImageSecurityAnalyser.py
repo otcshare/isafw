@@ -22,14 +22,14 @@ class ImageSecurityAnalyser:
                 register_plugin = plugin.init
             except:
                 print("Error in calling init() for plugin " + plugin.getPluginName())
-                print("Error info: ", sys.exc_info()[0])
+                print("Error info: ", sys.exc_info())
                 print("Skipping this plugin")
                 continue           
             else:
                 try:
                     register_plugin()
                 except:
-                    print("Exception in plugin init: ", sys.exc_info()[0])
+                    print("Exception in plugin init: ", sys.exc_info())
 
     def process_package_source(self, ISA_package):
         for name in plugins.__all__:
@@ -44,7 +44,7 @@ class ImageSecurityAnalyser:
                 try:
                     process_package_source(ISA_package)
                 except:
-                    print("Exception in plugin: ", sys.exc_info()[0])
+                    print("Exception in plugin: ", sys.exc_info())
 
     def process_package_list(self, package_list):
         # print package_list
@@ -60,7 +60,7 @@ class ImageSecurityAnalyser:
                 try:
                     process_package_list(package_list)
                 except:
-                    print("Exception in plugin: ", sys.exc_info()[0])
+                    print("Exception in plugin: ", sys.exc_info())
 
     def process_fsroot(self, fsroot_path):
         # print fsroot_path
@@ -76,7 +76,7 @@ class ImageSecurityAnalyser:
                 try:
                     process_fsroot(fsroot_path)
                 except:
-                    print("Exception in plugin: ", sys.exc_info()[0])
+                    print("Exception in plugin: ", sys.exc_info())
 
 
 

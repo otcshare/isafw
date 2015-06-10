@@ -44,7 +44,7 @@ class ISA_LicenseChecker():
                                 popen.wait()
                                 ISA_pkg.licenses = popen.stdout.read().split()
                             except:
-                                print ("Error in executing rpm query: ", sys.exc_info()[0])
+                                print ("Error in executing rpm query: ", sys.exc_info())
                                 print "Not able to process package: ", ISA_pkg.name
                                 return 
                             # print ISA_pkg.licenses

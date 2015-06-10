@@ -43,7 +43,7 @@ class ISA_CFChecker():
                     try:
                         result = subprocess.check_output(cmd).decode("utf-8")
                     except:
-                        print ("Not able to decode mime type", sys.exc_info()[0])
+                        print ("Not able to decode mime type", sys.exc_info())
                         continue
                     type = result.split()[-1]
                     # looking for links
@@ -53,7 +53,7 @@ class ISA_CFChecker():
                         try:
                             result = subprocess.check_output(cmd).decode("utf-8")
                         except:
-                            print ("Not able to decode mime type", sys.exc_info()[0])
+                            print ("Not able to decode mime type", sys.exc_info())
                             continue
                         type = result.split()[-1]
                     # building the name_field
@@ -97,13 +97,13 @@ class ISA_CFChecker():
                 fproblems_report.write("Files with no RELO: ")
                 for item in self.no_relo:
                     fproblems_report.write(item + ' ')
-                fproblems_report.write("\n\nFiles with no canary: ")
+                fproblems_report.write("\nFiles with no canary: ")
                 for item in self.no_canary:
                     fproblems_report.write(item + ' ')
-                fproblems_report.write("\n\nFiles with no PIE: ")
+                fproblems_report.write("\nFiles with no PIE: ")
                 for item in self.no_pie:
                     fproblems_report.write(item + ' ')
-                fproblems_report.write("\n\nFiles with no NX: ")
+                fproblems_report.write("\nFiles with no NX: ")
                 for item in self.no_nx:
                     fproblems_report.write(item + ' ')
         else:
