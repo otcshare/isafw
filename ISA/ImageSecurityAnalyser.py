@@ -18,51 +18,65 @@ class ImageSecurityAnalyser:
         for name in plugins.__all__:
             plugin = getattr(plugins, name)
             try:
-               # see if the plugin has a 'register' attribute
+                # see if the plugin has a 'init' attribute
                 register_plugin = plugin.init
-            except AttributeError:
+            except:
                 print("Error in calling init() for plugin " + plugin.getPluginName())
+                print("Error info: ", sys.exc_info()[0])
+                print("Skipping this plugin")
+                continue           
             else:
-                 # try to call it, without catching any errors
-                 register_plugin()
+                try:
+                    register_plugin()
+                except:
+                    print("Exception in plugin init: ", sys.exc_info()[0])
 
     def process_package_source(self, ISA_package):
         for name in plugins.__all__:
             plugin = getattr(plugins, name)
             try:
-               # see if the plugin has a 'register' attribute
+                # see if the plugin has a 'process_package_source' attribute
                 process_package_source = plugin.process_package_source
             except AttributeError:
+                # if it doesn't, it is ok, won't call this plugin
                 pass
             else:
-                 # try to call it, without catching any errors
-                 process_package_source(ISA_package)
+                try:
+                    process_package_source(ISA_package)
+                except:
+                    print("Exception in plugin: ", sys.exc_info()[0])
 
     def process_package_list(self, package_list):
-        #print package_list
+        # print package_list
         for name in plugins.__all__:
             plugin = getattr(plugins, name)
             try:
-               # see if the plugin has a 'register' attribute
+                # see if the plugin has a 'process_package_list' attribute
                 process_package_list = plugin.process_package_list
             except AttributeError:
+                # if it doesn't, it is ok, won't call this plugin
                 pass
             else:
-                 # try to call it, without catching any errors
-                 process_package_list(package_list)
+                try:
+                    process_package_list(package_list)
+                except:
+                    print("Exception in plugin: ", sys.exc_info()[0])
 
     def process_fsroot(self, fsroot_path):
-        #print fsroot_path
+        # print fsroot_path
         for name in plugins.__all__:
             plugin = getattr(plugins, name)
             try:
-               # see if the plugin has a 'register' attribute
+                # see if the plugin has a 'process_fsroot' attribute
                 process_fsroot = plugin.process_fsroot
             except AttributeError:
+                # if it doesn't, it is ok, won't call this plugin
                 pass
             else:
-                 # try to call it, without catching any errors
-                 process_fsroot(fsroot_path)
+                try:
+                    process_fsroot(fsroot_path)
+                except:
+                    print("Exception in plugin: ", sys.exc_info()[0])
 
 
 

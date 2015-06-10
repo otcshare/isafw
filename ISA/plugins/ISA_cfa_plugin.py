@@ -27,11 +27,12 @@ class ISA_CFChecker():
         else:
             print("checksec tool is missing!")
             print("Please install it from http://www.trapkit.de/tools/checksec.html")
+
     def process_fsroot(self, fsroot_path):
         #print fsroot_path
         if (self.initialized == True):
-            ffull_report = open(full_report,'w')
-            fproblems_report = open(problems_report,'w')
+            with open(full_report, 'w') as ffull_report:
+                ffull_report.write("Security-relevant flags for executables\n")
             self.files = self.find_files(fsroot_path)
             #print self.files
             for i in self.files:
@@ -39,13 +40,21 @@ class ISA_CFChecker():
                 if os.path.isfile(i):
                     # getting file type
                     cmd = ['file', '--mime-type', i]
-                    result = subprocess.check_output(cmd).decode("utf-8")
+                    try:
+                        result = subprocess.check_output(cmd).decode("utf-8")
+                    except:
+                        print ("Not able to decode mime type", sys.exc_info()[0])
+                        continue
                     type = result.split()[-1]
                     # looking for links
                     if type.find("symlink") != -1:
                         real_file = os.path.realpath(i)
                         cmd = ['file', '--mime-type', real_file]
-                        result = subprocess.check_output(cmd).decode("utf-8")
+                        try:
+                            result = subprocess.check_output(cmd).decode("utf-8")
+                        except:
+                            print ("Not able to decode mime type", sys.exc_info()[0])
+                            continue
                         type = result.split()[-1]
                     # building the name_field
                     if i == real_file:
@@ -74,28 +83,29 @@ class ISA_CFChecker():
                             sec_field = "File is pdf"
                         else:
                             sec_field = self.get_security_flags(real_file)
-                            ffull_report.write(real_file + ": ")
-                            for s in sec_field:
-                                line = ' '.join(str(x) for x in s)
-                                ffull_report.write(line + ' ')
-                            ffull_report.write('\n')
+                            with open(full_report, 'a') as ffull_report:
+                                ffull_report.write(real_file + ": ")
+                                for s in sec_field:
+                                    line = ' '.join(str(x) for x in s)
+                                    ffull_report.write(line + ' ')
+                                ffull_report.write('\n')
                             
                     else:
                         sec_field = "File is not binary"
-            fproblems_report.write("Files with no RELO: ")
-            for item in self.no_relo:
-                fproblems_report.write(item + ' ')
-            fproblems_report.write("\n\nFiles with no canary: ")
-            for item in self.no_canary:
-                fproblems_report.write(item + ' ')
-            fproblems_report.write("\n\nFiles with no PIE: ")
-            for item in self.no_pie:
-                fproblems_report.write(item + ' ')
-            fproblems_report.write("\n\nFiles with no NX: ")
-            for item in self.no_nx:
-                fproblems_report.write(item + ' ')
-            ffull_report.close()
-            fproblems_report.close()
+            # write report
+            with open(problems_report, 'w') as fproblems_report:
+                fproblems_report.write("Files with no RELO: ")
+                for item in self.no_relo:
+                    fproblems_report.write(item + ' ')
+                fproblems_report.write("\n\nFiles with no canary: ")
+                for item in self.no_canary:
+                    fproblems_report.write(item + ' ')
+                fproblems_report.write("\n\nFiles with no PIE: ")
+                for item in self.no_pie:
+                    fproblems_report.write(item + ' ')
+                fproblems_report.write("\n\nFiles with no NX: ")
+                for item in self.no_nx:
+                    fproblems_report.write(item + ' ')
         else:
             print("Plugin hasn't initialized! Not performing the call.")
 
@@ -145,7 +155,6 @@ class ISA_CFChecker():
                     self.no_nx.append(file_name[:])
                 text.append((t2, SF[t2]))               
             return text
-        return 
 
 #======== supported callbacks from ISA =============#
 
