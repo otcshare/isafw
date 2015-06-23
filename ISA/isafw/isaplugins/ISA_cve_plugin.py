@@ -1,12 +1,13 @@
 #ISA CVE checker plugin
 import subprocess
+import os
 
 CVEChecker = None
-report = "./cve_report"
 
 class ISA_CVEChecker:    
     initialized = False
-    def __init__(self):
+    def __init__(self, proxy):
+        self.proxy = proxy
         # check that cve-check-tool is installed
         rc = subprocess.call(["which", "cve-check-tool"])
         if rc == 0:
@@ -34,20 +35,23 @@ class ISA_CVEChecker:
         else:
             print("Plugin hasn't initialized! Not performing the call.")
 
-    def process_package_source(self, ISA_pkg):
+    def process_package_source(self, ISA_pkg, report_path):
         if (self.initialized == True):
             if (ISA_pkg.name and ISA_pkg.path_to_sources):    
                 # supporting rpm for now
-                args = ("cve-check-tool", "-N", "-c", "-a", "-n", "-t", "rpm", ISA_pkg.path_to_sources)
+                args = self.proxy + " cve-check-tool -N -c -a -t rpm -s \"" + ISA_pkg.path_to_sources+"\" \""+ISA_pkg.path_to_spec+"\""
+                #print args
                 try:
-                    popen = subprocess.Popen(args, stdout=subprocess.PIPE)
+                    popen = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
                     popen.wait()
                     output = popen.stdout.read()
                 except:
                     print ("Error in executing cve-check-tool: ", sys.exc_info())
                     output = "Error in executing cve-check-tool"
                 else:
-                    with open(report, 'w') as freport:
+                    report = report_path + "/cve-report"
+                    print output
+                    with open(report, 'a') as freport:
                         freport.write(output)
                     print output
             else:
@@ -60,17 +64,17 @@ class ISA_CVEChecker:
 
 #======== supported callbacks from ISA =============#
 
-def init():
+def init(proxy):
     global CVEChecker 
-    CVEChecker = ISA_CVEChecker()
+    CVEChecker = ISA_CVEChecker(proxy)
 def getPluginName():
     return "cve-check"
 def process_package_list(package_list):
     global CVEChecker 
     return CVEChecker.process_package_list(package_list)
-def process_package_source(ISA_pkg):
+def process_package_source(ISA_pkg, report_path):
     global CVEChecker 
-    return CVEChecker.process_package_source(ISA_pkg)
+    return CVEChecker.process_package_source(ISA_pkg, report_path)
 
 #====================================================#
 

@@ -8,8 +8,8 @@ from re import compile
 from re import sub
 
 CFChecker = None
-full_report = "./cfa_full_report"
-problems_report = "./cfa_problems_report"
+full_report = "/cfa_full_report_"
+problems_report = "/cfa_problems_report_"
 
 class ISA_CFChecker():    
     initialized = False
@@ -18,7 +18,8 @@ class ISA_CFChecker():
     no_pie = []
     no_nx = []
 
-    def __init__(self):
+    def __init__(self, proxy):
+        self.proxy = proxy
         # check that cve-check-tool is installed
         rc = subprocess.call(["which", "checksec.sh"])
         if rc == 0:
@@ -28,11 +29,12 @@ class ISA_CFChecker():
             print("checksec tool is missing!")
             print("Please install it from http://www.trapkit.de/tools/checksec.html")
 
-    def process_fsroot(self, fsroot_path):
+    def process_fsroot(self, fsroot_path, imagebasename, report_path):
         #print fsroot_path
         if (self.initialized == True):
-            with open(full_report, 'w') as ffull_report:
-                ffull_report.write("Security-relevant flags for executables\n")
+            with open(report_path + full_report + imagebasename, 'w') as ffull_report:
+                ffull_report.write("Security-relevant flags for executables for image: " + imagebasename + '\n')
+                ffull_report.write("With rootfs location at " +  fsroot_path + "\n\n")
             self.files = self.find_files(fsroot_path)
             #print self.files
             for i in self.files:
@@ -83,7 +85,7 @@ class ISA_CFChecker():
                             sec_field = "File is pdf"
                         else:
                             sec_field = self.get_security_flags(real_file)
-                            with open(full_report, 'a') as ffull_report:
+                            with open(report_path + full_report + imagebasename, 'a') as ffull_report:
                                 ffull_report.write(real_file + ": ")
                                 for s in sec_field:
                                     line = ' '.join(str(x) for x in s)
@@ -93,19 +95,21 @@ class ISA_CFChecker():
                     else:
                         sec_field = "File is not binary"
             # write report
-            with open(problems_report, 'w') as fproblems_report:
-                fproblems_report.write("Files with no RELO: ")
+            with open(report_path + problems_report + imagebasename, 'w') as fproblems_report:
+                fproblems_report.write("Report for image: " + imagebasename + '\n')
+                fproblems_report.write("With rootfs location at " +  fsroot_path + "\n\n")
+                fproblems_report.write("Files with no RELO:\n")
                 for item in self.no_relo:
-                    fproblems_report.write(item + ' ')
-                fproblems_report.write("\nFiles with no canary: ")
+                    fproblems_report.write(item + '\n')
+                fproblems_report.write("\n\nFiles with no canary:\n")
                 for item in self.no_canary:
-                    fproblems_report.write(item + ' ')
-                fproblems_report.write("\nFiles with no PIE: ")
+                    fproblems_report.write(item + '\n')
+                fproblems_report.write("\n\nFiles with no PIE:\n")
                 for item in self.no_pie:
-                    fproblems_report.write(item + ' ')
-                fproblems_report.write("\nFiles with no NX: ")
+                    fproblems_report.write(item + '\n')
+                fproblems_report.write("\n\nFiles with no NX:\m")
                 for item in self.no_nx:
-                    fproblems_report.write(item + ' ')
+                    fproblems_report.write(item + '\n')
         else:
             print("Plugin hasn't initialized! Not performing the call.")
 
@@ -158,14 +162,14 @@ class ISA_CFChecker():
 
 #======== supported callbacks from ISA =============#
 
-def init():
+def init(proxy):
     global CFChecker 
-    CFChecker = ISA_CFChecker()
+    CFChecker = ISA_CFChecker(proxy)
 def getPluginName():
     return "compile_flag_check"
-def process_fsroot(fsroot_path):
+def process_fsroot(fsroot_path, imagebasename, report_path):
     global CFChecker 
-    return CFChecker.process_fsroot(fsroot_path)
+    return CFChecker.process_fsroot(fsroot_path, imagebasename, report_path)
 
 #====================================================#
 
