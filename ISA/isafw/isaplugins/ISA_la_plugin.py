@@ -7,9 +7,9 @@ import re
 
 LicenseChecker = None
 
-flicenses = "/home/elena/Python/image_security_analyser-isa/ISA/plugins/configs/la/licenses"
-fapproved_non_osi = "/home/elena/Python/image_security_analyser-isa/ISA/plugins/configs/la/approved-non-osi"
-fexceptions = "/home/elena/Python/image_security_analyser-isa/ISA/plugins/configs/la/exceptions"
+flicenses = "/configs/la/licenses"
+fapproved_non_osi = "/configs/la/approved-non-osi"
+fexceptions = "/configs/la/exceptions"
 
 class ISA_LicenseChecker():    
     initialized = False
@@ -69,7 +69,7 @@ class ISA_LicenseChecker():
         return list_of_files
 
     def check_license(self, license, file_path):
-            with open(file_path, 'r') as f:
+            with open(os.path.dirname(__file__) + file_path, 'r') as f:
                 for line in f:
                     s = line.rstrip()
                     if s == license:
@@ -77,7 +77,7 @@ class ISA_LicenseChecker():
             return False
 
     def check_exceptions(self, pkg_name, license, file_path):
-            with open(file_path, 'r') as f:
+            with open(os.path.dirname(__file__) + file_path, 'r') as f:
                 for line in f:
                     s = line.rstrip()
                     if s == pkg_name + " " + license:
