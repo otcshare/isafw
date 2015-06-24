@@ -7,7 +7,7 @@ Currently supported plugins
 ---------------------------
 
  - ISA_cve_plugin. Plugin for checking CVE information for packages. 
-   Works on top of cve-check-tool (https://github.com/ikeydoherty/cve-check-tool
+   Works on top of cve-check-tool (https://github.com/ikeydoherty/cve-check-tool)
  - ISA_la_plugin. Plugin for verifying licensing information for packages. 
  - ISA_cf_plugin. Plugin for analysing binary compilation flags on rootfs.
    Works on top of checksec.sh script (http://www.trapkit.de/tools/checksec.html)
