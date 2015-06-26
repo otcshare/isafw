@@ -12,3 +12,9 @@ Currently supported plugins
  - ISA_cf_plugin. Plugin for analysing binary compilation flags on rootfs.
    Works on top of checksec.sh script (http://www.trapkit.de/tools/checksec.html)
 
+License
+-------
+
+ISA FW is available under the terms of the BSD 3-Clause License. Please check the LICENSE file for further details.
+
+Copyright (C) 2015 Intel Corporation
