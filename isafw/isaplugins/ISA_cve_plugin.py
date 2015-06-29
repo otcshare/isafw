@@ -1,6 +1,7 @@
 #ISA CVE checker plugin
 import subprocess
 import os
+import re
 
 CVEChecker = None
 
@@ -37,9 +38,15 @@ class ISA_CVEChecker:
 
     def process_package_source(self, ISA_pkg, report_path):
         if (self.initialized == True):
-            if (ISA_pkg.name and ISA_pkg.path_to_sources):    
-                # supporting rpm for now
-                args = self.proxy + " cve-check-tool -N -c -a -t rpm -s \"" + ISA_pkg.path_to_sources+"\" \""+ISA_pkg.path_to_spec+"\""
+            if (ISA_pkg.name and ISA_pkg.version and ISA_pkg.patch_files):    
+                # need to compose faux format file for cve-check-tool
+                ffauxfile = report_path + "/fauxfile" + ISA_pkg.name
+                #print ISA_pkg.patch_files
+                cve_patch_info = self.process_patch_list(ISA_pkg.patch_files)
+                #print "patch info: " + cve_patch_info
+                with open(ffauxfile, 'w') as fauxfile:
+                    fauxfile.write(ISA_pkg.name + "," + ISA_pkg.version + "," + cve_patch_info + ",")
+                args = self.proxy + " cve-check-tool -N -c -a -t faux " + ffauxfile
                 #print args
                 try:
                     popen = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
@@ -55,12 +62,29 @@ class ISA_CVEChecker:
                         freport.write(output)
                     print output
             else:
-                print("Mandatory arguments such as pkg name and path to sources are not provided!")
+                print("Mandatory arguments such as pkg name, version and list of patches are not provided!")
                 print("Not performing the call.")
         else:
             print("Plugin hasn't initialized! Not performing the call.")
 
+    def process_patch_list(self, patch_files):
+        patch_info = ""
+        for patch in patch_files:
+            patch1 = patch.partition("cve")
+            if (patch1[0] == patch):
+                # no cve substring, try CVE
+                patch1 = patch.partition("CVE")
+                if (patch1[0] == patch):
+                    continue
+            patchstripped = patch1[2].split('-')
+            #print  patchstripped
+            #print patchstripped[1]
+            #print re.findall('\d+', patchstripped[2])[0]
+            patch_info += " CVE-"+ patchstripped[1]+"-"+re.findall('\d+', patchstripped[2])[0]
+        return patch_info
 
+                
+    
 
 #======== supported callbacks from ISA =============#
 

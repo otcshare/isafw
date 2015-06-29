@@ -17,6 +17,7 @@ class ISA_package:
     version = ""                  # full version
     licenses = []                 # list of licences for all subpackages
     source_files = []             # list of strings of source files (tarball, patches, spec)
+    patch_files = []              # list of patch files to be applied
     path_to_sources = ""          # path to the source files (mandatory argument)
     path_to_spec = ""             # path to the spec file
 
