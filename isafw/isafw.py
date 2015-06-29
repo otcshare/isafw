@@ -1,7 +1,6 @@
 # main class of Image Security Analyser
 import os
 import sys
-import imp
 import isaplugins
 
 
