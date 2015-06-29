@@ -55,7 +55,7 @@ class ImageSecurityAnalyser:
                     print("Exception in plugin: ", sys.exc_info())
 
     def process_package_list(self, package_list):
-        # print package_list
+        # print("package_list: ", package_list)
         for name in isaplugins.__all__:
             plugin = getattr(isaplugins, name)
             try:
@@ -71,7 +71,7 @@ class ImageSecurityAnalyser:
                     print("Exception in plugin: ", sys.exc_info())
 
     def process_fsroot(self, fsroot_path, imagebasename, report_path):
-        # print fsroot_path
+        # print("fsroot_path: ", fsroot_path)
         for name in isaplugins.__all__:
             plugin = getattr(isaplugins, name)
             try:

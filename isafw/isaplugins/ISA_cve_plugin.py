@@ -19,7 +19,7 @@ class ISA_CVEChecker:
             print("Please install it from https://github.com/ikeydoherty/cve-check-tool.")
 
     def process_package_list(self, package_list):
-        # print package_list
+        # print("package_list: ", package_list)
         if (self.initialized == True):
             args = ("cve-check-tool", "-N", "-c", "-a", package_list)
             try:
@@ -27,12 +27,12 @@ class ISA_CVEChecker:
                 popen.wait()
                 output = popen.stdout.read()
             except:
-                print ("Error in executing cve-check-tool: ", sys.exc_info())
+                print("Error in executing cve-check-tool: ", sys.exc_info())
                 output = "Error in executing cve-check-tool"
             else:
                 with open(report, 'w') as freport:
                     freport.write(output)
-                #print output
+                #print("output: ", output)
         else:
             print("Plugin hasn't initialized! Not performing the call.")
 
@@ -41,26 +41,21 @@ class ISA_CVEChecker:
             if (ISA_pkg.name and ISA_pkg.version and ISA_pkg.patch_files):    
                 # need to compose faux format file for cve-check-tool
                 ffauxfile = report_path + "/fauxfile" + ISA_pkg.name
-                #print ISA_pkg.patch_files
                 cve_patch_info = self.process_patch_list(ISA_pkg.patch_files)
-                #print "patch info: " + cve_patch_info
                 with open(ffauxfile, 'w') as fauxfile:
                     fauxfile.write(ISA_pkg.name + "," + ISA_pkg.version + "," + cve_patch_info + ",")
                 args = self.proxy + " cve-check-tool -N -c -a -t faux " + ffauxfile
-                #print args
                 try:
                     popen = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
                     popen.wait()
                     output = popen.stdout.read()
                 except:
-                    print ("Error in executing cve-check-tool: ", sys.exc_info())
+                    print("Error in executing cve-check-tool: ", sys.exc_info())
                     output = "Error in executing cve-check-tool"
                 else:
                     report = report_path + "/cve-report"
-                    print output
                     with open(report, 'a') as freport:
                         freport.write(output)
-                    print output
             else:
                 print("Mandatory arguments such as pkg name, version and list of patches are not provided!")
                 print("Not performing the call.")
@@ -77,9 +72,6 @@ class ISA_CVEChecker:
                 if (patch1[0] == patch):
                     continue
             patchstripped = patch1[2].split('-')
-            #print  patchstripped
-            #print patchstripped[1]
-            #print re.findall('\d+', patchstripped[2])[0]
             patch_info += " CVE-"+ patchstripped[1]+"-"+re.findall('\d+', patchstripped[2])[0]
         return patch_info
 

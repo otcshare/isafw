@@ -25,8 +25,6 @@ class ISA_LicenseChecker():
             print("rpm tool is missing!")
 
     def process_package_source(self, ISA_pkg, report_path):
-        # print ISA_pkg.name
-        # print ISA_pkg.path_to_sources
         if (self.initialized == True):
             if (ISA_pkg.name and ISA_pkg.path_to_sources):
                 if (not ISA_pkg.licenses):
@@ -34,7 +32,6 @@ class ISA_LicenseChecker():
                     if ( not ISA_pkg.source_files):
                         # need to build list of source files
                         ISA_pkg.source_files = self.find_files(ISA_pkg.path_to_sources)
-                        # print ISA_pkg.source_files
                     for i in ISA_pkg.source_files:
                         if (i.endswith(".spec")): # supporting rpm only for now
                             args = ("rpm", "-q", "--queryformat","%{LICENSE} ", "--specfile", i)
@@ -43,10 +40,9 @@ class ISA_LicenseChecker():
                                 popen.wait()
                                 ISA_pkg.licenses = popen.stdout.read().split()
                             except:
-                                print ("Error in executing rpm query: ", sys.exc_info())
-                                print "Not able to process package: ", ISA_pkg.name
+                                print("Error in executing rpm query: ", sys.exc_info())
+                                print("Not able to process package: ", ISA_pkg.name)
                                 return 
-                #bb.warn('Package licenses: %s' % ISA_pkg.licenses)
                 for l in ISA_pkg.licenses:                                               
                     if (not self.check_license(l, flicenses) 
                     and not self.check_license(l, fapproved_non_osi)

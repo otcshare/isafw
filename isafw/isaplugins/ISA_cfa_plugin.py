@@ -30,13 +30,13 @@ class ISA_CFChecker():
             print("Please install it from http://www.trapkit.de/tools/checksec.html")
 
     def process_fsroot(self, fsroot_path, imagebasename, report_path):
-        #print fsroot_path
+        #print("fsroot_path: ", fsroot_path)
         if (self.initialized == True):
             with open(report_path + full_report + imagebasename, 'w') as ffull_report:
                 ffull_report.write("Security-relevant flags for executables for image: " + imagebasename + '\n')
                 ffull_report.write("With rootfs location at " +  fsroot_path + "\n\n")
             self.files = self.find_files(fsroot_path)
-            #print self.files
+            #print("self.files: ", self.files)
             for i in self.files:
                 real_file = i
                 if os.path.isfile(i):
@@ -45,7 +45,7 @@ class ISA_CFChecker():
                     try:
                         result = subprocess.check_output(cmd).decode("utf-8")
                     except:
-                        print ("Not able to decode mime type", sys.exc_info())
+                        print("Not able to decode mime type", sys.exc_info())
                         continue
                     type = result.split()[-1]
                     # looking for links
@@ -55,7 +55,7 @@ class ISA_CFChecker():
                         try:
                             result = subprocess.check_output(cmd).decode("utf-8")
                         except:
-                            print ("Not able to decode mime type", sys.exc_info())
+                            print("Not able to decode mime type", sys.exc_info())
                             continue
                         type = result.split()[-1]
                     # building the name_field
