@@ -81,7 +81,7 @@ class ImageSecurityAnalyser:
                 except:
                     print("Exception in plugin: ", sys.exc_info())
 
-    def process_package_list(self, package_list):
+    def process_package_list(self, package_list, imagebasename, report_path):
         # print("package_list: ", package_list)
         for name in isaplugins.__all__:
             plugin = getattr(isaplugins, name)
@@ -93,7 +93,7 @@ class ImageSecurityAnalyser:
                 pass
             else:
                 try:
-                    process_package_list(package_list)
+                    process_package_list(package_list, imagebasename, report_path)
                 except:
                     print("Exception in plugin: ", sys.exc_info())
 
