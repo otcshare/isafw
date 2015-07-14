@@ -36,21 +36,27 @@ LicenseChecker = None
 flicenses = "/configs/la/licenses"
 fapproved_non_osi = "/configs/la/approved-non-osi"
 fexceptions = "/configs/la/exceptions"
+log = "/isafw_lalog"
 
 class ISA_LicenseChecker():    
     initialized = False
 
-    def __init__(self, proxy):
+    def __init__(self, proxy, reportdir):
         self.proxy = proxy
+        self.reportdir = reportdir
         # check that rpm is installed (supporting only rpm packages for now)
         rc = subprocess.call(["which", "rpm"])        
         if rc == 0:
                 self.initialized = True
                 print("Plugin ISA_LicenseChecker initialized!")
+                with open(reportdir + log, 'w') as flog:
+                    flog.write("Plugin ISA_LicenseChecker initialized!\n")
         else:
             print("rpm tool is missing!")
+            with open(reportdir + log, 'w') as flog:
+                flog.write("rpm tool is missing!\n")
 
-    def process_package_source(self, ISA_pkg, report_path):
+    def process_package_source(self, ISA_pkg):
         if (self.initialized == True):
             if (ISA_pkg.name and ISA_pkg.path_to_sources):
                 if (not ISA_pkg.licenses):
@@ -68,20 +74,28 @@ class ISA_LicenseChecker():
                             except:
                                 print("Error in executing rpm query: ", sys.exc_info())
                                 print("Not able to process package: ", ISA_pkg.name)
+                                with open(reportdir + log, 'a') as flog:
+                                    flog.write("Error in executing rpm query: " + sys.exc_info())
+                                    flog.write("\nNot able to process package: " + ISA_pkg.name)
                                 return 
                 for l in ISA_pkg.licenses:                                               
                     if (not self.check_license(l, flicenses) 
                     and not self.check_license(l, fapproved_non_osi)
                     and not self.check_exceptions(ISA_pkg.name, l, fexceptions)):
                         # log the package as not following correct license
-                        report = report_path + "/license_report"
+                        report = self.reportdir + "/license_report"
                         with open(report, 'a') as freport:
                             freport.write(ISA_pkg.name + ": " + l + "\n")
             else:
                 print("Mandatory arguments such as pkg name and path to sources are not provided!")
                 print("Not performing the call.")
+                with open(reportdir + log, 'a') as flog:
+                    flog.write("Mandatory arguments such as pkg name and path to sources are not provided!\n")
+                    flog.write("Not performing the call.\n")
         else:
             print("Plugin hasn't initialized! Not performing the call.")
+            with open(reportdir + log, 'a') as flog:
+                flog.write("Plugin hasn't initialized! Not performing the call.")
 
     def find_files(self, init_path):
         list_of_files = []
@@ -109,13 +123,13 @@ class ISA_LicenseChecker():
 
 #======== supported callbacks from ISA =============#
 
-def init(proxy):
+def init(proxy, reportdir):
     global LicenseChecker 
-    LicenseChecker = ISA_LicenseChecker(proxy)
+    LicenseChecker = ISA_LicenseChecker(proxy, reportdir)
 def getPluginName():
     return "license_check"
-def process_package_source(ISA_pkg, report_path):
+def process_package_source(ISA_pkg):
     global LicenseChecker 
-    return LicenseChecker.process_package_source(ISA_pkg, report_path)
+    return LicenseChecker.process_package_source(ISA_pkg)
 
 #====================================================#

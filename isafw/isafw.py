@@ -49,7 +49,7 @@ class ISA_package:
     path_to_spec = ""             # path to the spec file
 
 class ImageSecurityAnalyser:
-    def __init__(self, proxy):
+    def __init__(self, proxy, reportdir):
         for name in isaplugins.__all__:
             plugin = getattr(isaplugins, name)
             try:
@@ -62,11 +62,11 @@ class ImageSecurityAnalyser:
                 continue           
             else:
                 try:
-                    register_plugin(proxy)
+                    register_plugin(proxy, reportdir)
                 except:
                     print("Exception in plugin init: ", sys.exc_info())
 
-    def process_package_source(self, ISA_package, report_path):
+    def process_package_source(self, ISA_package):
         for name in isaplugins.__all__:
             plugin = getattr(isaplugins, name)
             try:
@@ -77,11 +77,11 @@ class ImageSecurityAnalyser:
                 pass
             else:
                 try:
-                    process_package_source(ISA_package, report_path)
+                    process_package_source(ISA_package)
                 except:
                     print("Exception in plugin: ", sys.exc_info())
 
-    def process_package_list(self, package_list, imagebasename, report_path):
+    def process_package_list(self, package_list, imagebasename):
         # print("package_list: ", package_list)
         for name in isaplugins.__all__:
             plugin = getattr(isaplugins, name)
@@ -93,11 +93,27 @@ class ImageSecurityAnalyser:
                 pass
             else:
                 try:
-                    process_package_list(package_list, imagebasename, report_path)
+                    process_package_list(package_list, imagebasename)
                 except:
                     print("Exception in plugin: ", sys.exc_info())
 
-    def process_fsroot(self, fsroot_path, imagebasename, report_path):
+    def process_kernel_conf(self, kernel_conf, imagebasename):
+        # print("kernel_conf: ", kernel_conf)
+        for name in isaplugins.__all__:
+            plugin = getattr(isaplugins, name)
+            try:
+                # see if the plugin has a 'process_kernel_conf' attribute
+                process_kernel_conf = plugin.process_kernel_conf
+            except AttributeError:
+                # if it doesn't, it is ok, won't call this plugin
+                pass
+            else:
+                try:
+                    process_kernel_conf(kernel_conf, imagebasename)
+                except:
+                    print("Exception in plugin: ", sys.exc_info())
+
+    def process_fsroot(self, fsroot_path, imagebasename):
         # print("fsroot_path: ", fsroot_path)
         for name in isaplugins.__all__:
             plugin = getattr(isaplugins, name)
@@ -109,7 +125,7 @@ class ImageSecurityAnalyser:
                 pass
             else:
                 try:
-                    process_fsroot(fsroot_path, imagebasename, report_path)
+                    process_fsroot(fsroot_path, imagebasename)
                 except:
                     print("Exception in plugin: ", sys.exc_info())
 
