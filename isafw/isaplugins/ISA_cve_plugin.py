@@ -60,7 +60,7 @@ class ISA_CVEChecker:
                 cve_patch_info = self.process_patch_list(ISA_pkg.patch_files)
                 with open(ffauxfile, 'w') as fauxfile:
                     fauxfile.write(ISA_pkg.name + "," + ISA_pkg.version + "," + cve_patch_info + ",")
-                args = self.proxy + " cve-check-tool -N -c -a -t faux " + ffauxfile
+                args = "http_proxy=https_proxy=" + self.proxy + " cve-check-tool -N -c -a -t faux " + ffauxfile
                 try:
                     popen = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
                     popen.wait()

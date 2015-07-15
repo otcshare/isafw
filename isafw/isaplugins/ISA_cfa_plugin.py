@@ -144,7 +144,7 @@ class ISA_CFChecker():
                 fproblems_report.write("\n\nFiles with no PIE:\n")
                 for item in self.no_pie:
                     fproblems_report.write(item + '\n')
-                fproblems_report.write("\n\nFiles with no NX:\m")
+                fproblems_report.write("\n\nFiles with no NX:\n")
                 for item in self.no_nx:
                     fproblems_report.write(item + '\n')
         else:
