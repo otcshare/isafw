@@ -36,7 +36,7 @@ LicenseChecker = None
 flicenses = "/configs/la/licenses"
 fapproved_non_osi = "/configs/la/approved-non-osi"
 fexceptions = "/configs/la/exceptions"
-log = "/isafw_lalog"
+log = "/internal/isafw_lalog"
 
 class ISA_LicenseChecker():    
     initialized = False
@@ -49,11 +49,11 @@ class ISA_LicenseChecker():
         if rc == 0:
                 self.initialized = True
                 print("Plugin ISA_LicenseChecker initialized!")
-                with open(reportdir + log, 'w') as flog:
+                with open(self.reportdir + log, 'w') as flog:
                     flog.write("Plugin ISA_LicenseChecker initialized!\n")
         else:
             print("rpm tool is missing!")
-            with open(reportdir + log, 'w') as flog:
+            with open(self.reportdir + log, 'w') as flog:
                 flog.write("rpm tool is missing!\n")
 
     def process_package_source(self, ISA_pkg):
@@ -74,7 +74,7 @@ class ISA_LicenseChecker():
                             except:
                                 print("Error in executing rpm query: ", sys.exc_info())
                                 print("Not able to process package: ", ISA_pkg.name)
-                                with open(reportdir + log, 'a') as flog:
+                                with open(self.reportdir + log, 'a') as flog:
                                     flog.write("Error in executing rpm query: " + sys.exc_info())
                                     flog.write("\nNot able to process package: " + ISA_pkg.name)
                                 return 
@@ -89,12 +89,12 @@ class ISA_LicenseChecker():
             else:
                 print("Mandatory arguments such as pkg name and path to sources are not provided!")
                 print("Not performing the call.")
-                with open(reportdir + log, 'a') as flog:
+                with open(self.reportdir + log, 'a') as flog:
                     flog.write("Mandatory arguments such as pkg name and path to sources are not provided!\n")
                     flog.write("Not performing the call.\n")
         else:
             print("Plugin hasn't initialized! Not performing the call.")
-            with open(reportdir + log, 'a') as flog:
+            with open(self.reportdir + log, 'a') as flog:
                 flog.write("Plugin hasn't initialized! Not performing the call.")
 
     def find_files(self, init_path):

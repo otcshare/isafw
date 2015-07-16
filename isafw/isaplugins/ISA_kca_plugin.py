@@ -29,6 +29,7 @@
 KCAnalyzer = None
 fullreport = "/kca_fullreport_"
 problemsreport = "/kca_problems_report_"
+log = "/internal/isafw_kcalog"
 
 class ISA_KCA():    
     initialized = False
@@ -123,7 +124,10 @@ class ISA_KCA():
                        'CONFIG_EVM'                                     : 'not set',
                        'CONFIG_EVM_ATTR_FSUUID'                         : 'not set',
                        'CONFIG_EVM_EXTRA_SMACK_XATTRS'                  : 'not set',
-                       'CONFIG_IMA_DEFAULT_HASH_SHA256'                 : 'not set'
+                       'CONFIG_IMA_DEFAULT_HASH_SHA1'                   : 'not set',
+                       'CONFIG_IMA_DEFAULT_HASH_SHA256'                 : 'not set',
+                       'CONFIG_IMA_DEFAULT_HASH_SHA512'                 : 'not set',
+                       'CONFIG_IMA_DEFAULT_HASH_WP512'                  : 'not set'
                        }
 
     integrity_kco_ref={'CONFIG_INTEGRITY'                               : 'y',
@@ -137,7 +141,10 @@ class ISA_KCA():
                        'CONFIG_EVM'                                     : 'y',
                        'CONFIG_EVM_ATTR_FSUUID'                         : 'y',
                        'CONFIG_EVM_EXTRA_SMACK_XATTRS'                  : 'y',
-                       'CONFIG_IMA_DEFAULT_HASH_SHA256'                 : 'y'
+                       'CONFIG_IMA_DEFAULT_HASH_SHA1'                   : 'not set',
+                       'CONFIG_IMA_DEFAULT_HASH_SHA256'                 : 'y',
+                       'CONFIG_IMA_DEFAULT_HASH_SHA512'                 : 'y',
+                       'CONFIG_IMA_DEFAULT_HASH_WP512'                  : 'not set'
                        }
 
     def __init__(self, proxy, reportdir):
@@ -145,9 +152,12 @@ class ISA_KCA():
         self.reportdir = reportdir
         self.initialized = True
         print("Plugin ISA_KCA initialized!")
+        with open(self.reportdir + log, 'w') as flog:
+            flog.write("Plugin ISA_KernelConfigChecker initialized!\n")
 
     def process_kernel_conf(self, kernel_conf, imagebasename):
-        print("kernel_conf: ", kernel_conf)
+        with open(self.reportdir + log, 'a') as flog:
+            flog.write("Analyzing kernel config file at: " + kernel_conf + "for the image: " + imagebasename)
         if (self.initialized == True):
           with open(kernel_conf, 'r') as fkernel_conf:
             for line in fkernel_conf:
@@ -164,25 +174,26 @@ class ISA_KCA():
                 for key in self.integrity_kco:
                     if key +'=' in line:
                         self.integrity_kco[key] = line.split('=')[1]
-          print("hardening_kco: " + str(self.hardening_kco))     
-          print("keys_kco: " + str(self.keys_kco))              
-          print("security_kco: " + str(self.security_kco))              
-          print("integrity_kco: " + str(self.integrity_kco))                       
+          with open(self.reportdir + log, 'a') as flog:
+            flog.write("\n\nhardening_kco values: " + str(self.hardening_kco))
+            flog.write("\n\nkeys_kco values: " + str(self.keys_kco))              
+            flog.write("\n\nsecurity_kco values: " + str(self.security_kco))              
+            flog.write("\n\nintegrity_kco values: " + str(self.integrity_kco))                    
           with open(self.reportdir + fullreport + imagebasename, 'w') as freport:
-                freport.write("Report for image: " + imagebasename + '\n')
-                freport.write("With the kernel conf at: " + kernel_conf + '\n\n')
-                freport.write("Hardening options:\n")
-                for key in sorted(self.hardening_kco):
-                    freport.write(key + ' : ' + str(self.hardening_kco[key]) + '\n')
-                freport.write("\nKey-related options:\n")
-                for key in sorted(self.keys_kco):
-                    freport.write(key + ' : ' + str(self.keys_kco[key]) + '\n')
-                freport.write("\nSecurity options:\n")
-                for key in sorted(self.security_kco):
-                    freport.write(key + ' : ' + str(self.security_kco[key]) + '\n')
-                freport.write("\nIntegrity options:\n")
-                for key in sorted(self.integrity_kco):
-                    freport.write(key + ' : ' + str(self.integrity_kco[key]) + '\n')
+            freport.write("Report for image: " + imagebasename + '\n')
+            freport.write("With the kernel conf at: " + kernel_conf + '\n\n')
+            freport.write("Hardening options:\n")
+            for key in sorted(self.hardening_kco):
+                freport.write(key + ' : ' + str(self.hardening_kco[key]) + '\n')
+            freport.write("\nKey-related options:\n")
+            for key in sorted(self.keys_kco):
+                freport.write(key + ' : ' + str(self.keys_kco[key]) + '\n')
+            freport.write("\nSecurity options:\n")
+            for key in sorted(self.security_kco):
+                freport.write(key + ' : ' + str(self.security_kco[key]) + '\n')
+            freport.write("\nIntegrity options:\n")
+            for key in sorted(self.integrity_kco):
+                freport.write(key + ' : ' + str(self.integrity_kco[key]) + '\n')
           with open(self.reportdir + problemsreport + imagebasename, 'w') as freport:
                 freport.write("Report for image: " + imagebasename + '\n')
                 freport.write("With the kernel conf at: " + kernel_conf + '\n\n')
@@ -206,7 +217,6 @@ class ISA_KCA():
                         valid = False
                         if (key == "CONFIG_DEFAULT_SECURITY"):
                             options = self.security_kco_ref[key].split(',')
-                            print("Options: ", options)
                             for option in options:
                                 if (option == self.security_kco[key]):
                                     valid = True
@@ -228,10 +238,19 @@ class ISA_KCA():
                 freport.write("\nIntegrity options that need improvement:\n")
                 for key in sorted(self.integrity_kco):
                     if (self.integrity_kco[key] != self.integrity_kco_ref[key]) :
-                        freport.write("\nActual value:\n")
-                        freport.write(key + ' : ' + str(self.integrity_kco[key]) + '\n')
-                        freport.write("Recommended value:\n")
-                        freport.write(key + ' : ' + str(self.integrity_kco_ref[key]) + '\n')
+                        valid = False
+                        if ((key == "CONFIG_IMA_DEFAULT_HASH_SHA1") or 
+                           (key == "CONFIG_IMA_DEFAULT_HASH_SHA256") or
+                           (key == "CONFIG_IMA_DEFAULT_HASH_SHA512") or
+                           (key == "CONFIG_IMA_DEFAULT_HASH_WP512")) :
+                            if ((self.integrity_kco['CONFIG_IMA_DEFAULT_HASH_SHA256'] == 'y') or 
+                                (self.integrity_kco['CONFIG_IMA_DEFAULT_HASH_SHA512'] == 'y')):
+                                valid = True
+                        if valid == False :
+                            freport.write("\nActual value:\n")
+                            freport.write(key + ' : ' + str(self.integrity_kco[key]) + '\n')
+                            freport.write("Recommended value:\n")
+                            freport.write(key + ' : ' + str(self.integrity_kco_ref[key]) + '\n')
         else:
             print("Plugin hasn't initialized! Not performing the call.")
 

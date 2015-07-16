@@ -31,7 +31,7 @@ import os
 import re
 
 CVEChecker = None
-log = "/isafw_cvelog"
+log = "/internal/isafw_cvelog"
 
 class ISA_CVEChecker:    
     initialized = False
@@ -43,12 +43,12 @@ class ISA_CVEChecker:
         if rc == 0:
             self.initialized = True
             print("Plugin ISA_CVEChecker initialized!")
-            with open(reportdir + log, 'w') as flog:
+            with open(self.reportdir + log, 'w') as flog:
                 flog.write("Plugin ISA_CVEChecker initialized!\n")
         else:
             print("cve-check-tool is missing!")
             print("Please install it from https://github.com/ikeydoherty/cve-check-tool.")
-            with open(reportdir + log, 'w') as flog:
+            with open(self.reportdir + log, 'w') as flog:
                 flog.write("cve-check-tool is missing!\n")
                 flog.write("Please install it from https://github.com/ikeydoherty/cve-check-tool.\n")
 
@@ -56,11 +56,13 @@ class ISA_CVEChecker:
         if (self.initialized == True):
             if (ISA_pkg.name and ISA_pkg.version and ISA_pkg.patch_files):    
                 # need to compose faux format file for cve-check-tool
-                ffauxfile = self.reportdir + "/fauxfile"
+                ffauxfile = self.reportdir + "/internal/fauxfile"
                 cve_patch_info = self.process_patch_list(ISA_pkg.patch_files)
                 with open(ffauxfile, 'w') as fauxfile:
                     fauxfile.write(ISA_pkg.name + "," + ISA_pkg.version + "," + cve_patch_info + ",")
                 args = "http_proxy=https_proxy=" + self.proxy + " cve-check-tool -N -c -a -t faux " + ffauxfile
+                with open(self.reportdir + log, 'a') as flog:
+                    flog.write("\n\nArguments for calling cve-check-tool: " + args)
                 try:
                     popen = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
                     popen.wait()
@@ -68,7 +70,7 @@ class ISA_CVEChecker:
                 except:
                     print("Error in executing cve-check-tool: ", sys.exc_info())
                     output = "Error in executing cve-check-tool"
-                    with open(reportdir + log, 'a') as flog:
+                    with open(self.reportdir + log, 'a') as flog:
                         flog.write("Error in executing cve-check-tool: " + sys.exc_info())
                 else:
                     report = self.reportdir + "/cve-report"
@@ -77,13 +79,13 @@ class ISA_CVEChecker:
             else:
                 print("Mandatory arguments such as pkg name, version and list of patches are not provided!")
                 print("Not performing the call.")
-                with open(reportdir + log, 'a') as flog:
+                with open(self.reportdir + log, 'a') as flog:
                     flog.write("Mandatory arguments such as pkg name, version and list of patches are not provided!\n")
                     flog.write("Not performing the call.\n")
 
         else:
             print("Plugin hasn't initialized! Not performing the call.")
-            with open(reportdir + log, 'a') as flog:
+            with open(self.reportdir + log, 'a') as flog:
                 flog.write("Plugin hasn't initialized! Not performing the call.\n")
 
     def process_patch_list(self, patch_files):

@@ -36,7 +36,7 @@ from re import sub
 CFChecker = None
 full_report = "/cfa_full_report_"
 problems_report = "/cfa_problems_report_"
-log = "/isafw_cfalog"
+log = "/internal/isafw_cfalog"
 
 class ISA_CFChecker():    
     initialized = False
@@ -53,23 +53,25 @@ class ISA_CFChecker():
         if rc == 0:
             self.initialized = True
             print("Plugin ISA_CFChecker initialized!")
-            with open(reportdir + log, 'w') as flog:
+            with open(self.reportdir + log, 'w') as flog:
                 flog.write("Plugin ISA_CFChecker initialized!\n")
         else:
             print("checksec tool is missing!")
             print("Please install it from http://www.trapkit.de/tools/checksec.html")
-            with open(reportdir + log, 'w') as flog:
+            with open(self.reportdir + log, 'w') as flog:
                 flog.write("checksec tool is missing!\n")
                 flog.write("Please install it from http://www.trapkit.de/tools/checksec.html\n")
 
     def process_fsroot(self, fsroot_path, imagebasename):
-        #print("fsroot_path: ", fsroot_path)
+        with open(self.reportdir + log, 'a') as flog:
+            flog.write("\n\nFilesystem path is: " + fsroot_path)
         if (self.initialized == True):
             with open(self.reportdir + full_report + imagebasename, 'w') as ffull_report:
                 ffull_report.write("Security-relevant flags for executables for image: " + imagebasename + '\n')
                 ffull_report.write("With rootfs location at " +  fsroot_path + "\n\n")
             self.files = self.find_files(fsroot_path)
-            #print("self.files: ", self.files)
+            with open(self.reportdir + log, 'a') as flog:
+                flog.write("\n\nFile list is: " + str(self.files))
             for i in self.files:
                 real_file = i
                 if os.path.isfile(i):
@@ -79,7 +81,7 @@ class ISA_CFChecker():
                         result = subprocess.check_output(cmd).decode("utf-8")
                     except:
                         print("Not able to decode mime type", sys.exc_info())
-                        with open(reportdir + log, 'a') as flog:
+                        with open(self.reportdir + log, 'a') as flog:
                             flog.write("Not able to decode mime type" + sys.exc_info())
                         continue
                     type = result.split()[-1]
@@ -91,7 +93,7 @@ class ISA_CFChecker():
                             result = subprocess.check_output(cmd).decode("utf-8")
                         except:
                             print("Not able to decode mime type", sys.exc_info())
-                            with open(reportdir + log, 'a') as flog:
+                            with open(self.reportdir + log, 'a') as flog:
                                 flog.write("Not able to decode mime type" + sys.exc_info())
                             continue
                         type = result.split()[-1]
@@ -149,7 +151,7 @@ class ISA_CFChecker():
                     fproblems_report.write(item + '\n')
         else:
             print("Plugin hasn't initialized! Not performing the call.")
-            with open(reportdir + log, 'a') as flog:
+            with open(self.reportdir + log, 'a') as flog:
                 flog.write("Plugin hasn't initialized! Not performing the call.\n")
 
     def find_files(self, init_path):
