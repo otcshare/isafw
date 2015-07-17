@@ -43,20 +43,22 @@ class ISA_CVEChecker:
         if rc == 0:
             self.initialized = True
             print("Plugin ISA_CVEChecker initialized!")
-            with open(self.reportdir + log, 'w') as flog:
-                flog.write("Plugin ISA_CVEChecker initialized!\n")
+            with open(self.reportdir + log, 'a') as flog:
+                flog.write("\nPlugin ISA_CVEChecker initialized!\n")
         else:
             print("cve-check-tool is missing!")
             print("Please install it from https://github.com/ikeydoherty/cve-check-tool.")
-            with open(self.reportdir + log, 'w') as flog:
+            with open(self.reportdir + log, 'a') as flog:
                 flog.write("cve-check-tool is missing!\n")
                 flog.write("Please install it from https://github.com/ikeydoherty/cve-check-tool.\n")
 
     def process_package_source(self, ISA_pkg):
         if (self.initialized == True):
-            if (ISA_pkg.name and ISA_pkg.version and ISA_pkg.patch_files):    
+            if (ISA_pkg.name and ISA_pkg.version and ISA_pkg.patch_files):
+                with open(self.reportdir + log, 'a') as flog:
+                    flog.write("\npkg name: " + ISA_pkg.name)    
                 # need to compose faux format file for cve-check-tool
-                ffauxfile = self.reportdir + "/internal/fauxfile"
+                ffauxfile = self.reportdir + "/internal/fauxfile_" + ISA_pkg.name
                 cve_patch_info = self.process_patch_list(ISA_pkg.patch_files)
                 with open(ffauxfile, 'w') as fauxfile:
                     fauxfile.write(ISA_pkg.name + "," + ISA_pkg.version + "," + cve_patch_info + ",")

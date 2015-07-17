@@ -54,7 +54,7 @@ class ISA_CFChecker():
             self.initialized = True
             print("Plugin ISA_CFChecker initialized!")
             with open(self.reportdir + log, 'w') as flog:
-                flog.write("Plugin ISA_CFChecker initialized!\n")
+                flog.write("\nPlugin ISA_CFChecker initialized!\n")
         else:
             print("checksec tool is missing!")
             print("Please install it from http://www.trapkit.de/tools/checksec.html")

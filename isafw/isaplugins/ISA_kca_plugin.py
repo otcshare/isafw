@@ -51,7 +51,8 @@ class ISA_KCA():
                        'CONFIG_X86_MSR'                                 : 'not set',
                        'CONFIG_ARCH_BINFMT_ELF_RANDOMIZE_PIE'           : 'not set',
                        'CONFIG_DEBUG_KERNEL'                            : 'not set',
-                       'CONFIG_DEBUG_FS'                                : 'not set'
+                       'CONFIG_DEBUG_FS'                                : 'not set',
+                       'CONFIG_MODULE_SIG_FORCE'                        : 'not set'
                      }
 
     hardening_kco_ref={'CONFIG_CC_STACKPROTECTOR'                       : 'y', 
@@ -71,7 +72,8 @@ class ISA_KCA():
                        'CONFIG_X86_MSR'                                 : 'n',
                        'CONFIG_ARCH_BINFMT_ELF_RANDOMIZE_PIE'           : 'y',
                        'CONFIG_DEBUG_KERNEL'                            : 'n',
-                       'CONFIG_DEBUG_FS'                                : 'n'
+                       'CONFIG_DEBUG_FS'                                : 'n',
+                       'CONFIG_MODULE_SIG_FORCE'                        : 'y'
                      }
 
     keys_kco =       { 'CONFIG_KEYS'                                    : 'not set',

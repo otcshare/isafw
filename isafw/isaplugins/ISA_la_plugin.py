@@ -49,11 +49,11 @@ class ISA_LicenseChecker():
         if rc == 0:
                 self.initialized = True
                 print("Plugin ISA_LicenseChecker initialized!")
-                with open(self.reportdir + log, 'w') as flog:
-                    flog.write("Plugin ISA_LicenseChecker initialized!\n")
+                with open(self.reportdir + log, 'a') as flog:
+                    flog.write("\nPlugin ISA_LicenseChecker initialized!\n")
         else:
             print("rpm tool is missing!")
-            with open(self.reportdir + log, 'w') as flog:
+            with open(self.reportdir + log, 'a') as flog:
                 flog.write("rpm tool is missing!\n")
 
     def process_package_source(self, ISA_pkg):
