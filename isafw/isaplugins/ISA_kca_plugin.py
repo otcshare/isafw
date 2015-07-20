@@ -57,7 +57,7 @@ class ISA_KCA():
 
     hardening_kco_ref={'CONFIG_CC_STACKPROTECTOR'                       : 'y', 
                        'CONFIG_DEFAULT_MMAP_MIN_ADDR'                   : '65536', # x86 specific
-                       'CONFIG_KEXEC'                                   : 'n',
+                       'CONFIG_KEXEC'                                   : 'not set',
                        'CONFIG_PROC_KCORE'                              : 'n',
                        'CONFIG_SECURITY_DMESG_RESTRICT'                 : 'y',
                        'CONFIG_DEBUG_STACKOVERFLOW'                     : 'y',
@@ -202,10 +202,15 @@ class ISA_KCA():
                 freport.write("Hardening options that need improvement:\n")
                 for key in sorted(self.hardening_kco):
                     if (self.hardening_kco[key] != self.hardening_kco_ref[key]) :
-                        freport.write("\nActual value:\n")
-                        freport.write(key + ' : ' + str(self.hardening_kco[key]) + '\n')
-                        freport.write("Recommended value:\n")
-                        freport.write(key + ' : ' + str(self.hardening_kco_ref[key]) + '\n')
+                        valid = False
+                        if (key == "CONFIG_DEBUG_STRICT_USER_COPY_CHECKS") :
+                            if (self.hardening_kco['CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS'] == 'y'):
+                                valid = True
+                        if valid == False :
+                            freport.write("\nActual value:\n")
+                            freport.write(key + ' : ' + str(self.hardening_kco[key]) + '\n')
+                            freport.write("Recommended value:\n")
+                            freport.write(key + ' : ' + str(self.hardening_kco_ref[key]) + '\n')
                 freport.write("\nKey-related options that need improvement:\n")
                 for key in sorted(self.keys_kco):
                     if (self.keys_kco[key] != self.keys_kco_ref[key]) :
