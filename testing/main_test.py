@@ -7,8 +7,8 @@ fsroot = "/iot/iot-os/iot-os/build/tmp-glibc/work/intel_corei7_64-iotos-linux/co
 kernel_conf = "/iot/iot-os/iot-os/build/tmp-glibc/work-shared/intel-corei7-64/kernel-build-artifacts/.config"
 imagebasename = "base"
 reportdir = "/home/elena"
-#http_proxy = "http_proxy=https_proxy=http://proxy.jf.intel.com:911"
-http_proxy = ""
+http_proxy = "http_proxy=https_proxy=http://proxy.jf.intel.com:911"
+
 imageSecurityAnalyser = isafw.ImageSecurityAnalyser(http_proxy, reportdir)
 imageSecurityAnalyser.process_package_list(package_list, imagebasename)
 imageSecurityAnalyser.process_fsroot(fsroot, imagebasename)
