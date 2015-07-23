@@ -29,6 +29,7 @@
 import subprocess
 import os
 import re
+import tempfile
 
 CVEChecker = None
 log = "/internal/isafw_cvelog"
@@ -58,11 +59,11 @@ class ISA_CVEChecker:
                 with open(self.reportdir + log, 'a') as flog:
                     flog.write("\npkg name: " + ISA_pkg.name)    
                 # need to compose faux format file for cve-check-tool
-                ffauxfile = self.reportdir + "/internal/fauxfile_" + ISA_pkg.name
+                ffauxfile = tempfile.mkstemp()[1]
                 cve_patch_info = self.process_patch_list(ISA_pkg.patch_files)
                 with open(ffauxfile, 'w') as fauxfile:
                     fauxfile.write(ISA_pkg.name + "," + ISA_pkg.version + "," + cve_patch_info + ",")
-                args = "https_proxy= http_proxy=" + self.proxy + " cve-check-tool -N -c -a -t faux " + ffauxfile
+                args = "https_proxy=%s http_proxy=%s cve-check-tool -N -c -a -t faux %s" % (self.proxy, self.proxy, ffauxfile)
                 with open(self.reportdir + log, 'a') as flog:
                     flog.write("\n\nArguments for calling cve-check-tool: " + args)
                 try:
@@ -78,6 +79,7 @@ class ISA_CVEChecker:
                     report = self.reportdir + "/cve-report"
                     with open(report, 'a') as freport:
                         freport.write(output)
+                os.remove(ffauxfile)
             else:
                 print("Mandatory arguments such as pkg name, version and list of patches are not provided!")
                 print("Not performing the call.")
