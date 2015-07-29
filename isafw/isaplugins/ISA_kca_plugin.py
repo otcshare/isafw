@@ -29,7 +29,7 @@
 KCAnalyzer = None
 fullreport = "/kca_fullreport_"
 problemsreport = "/kca_problems_report_"
-log = "/internal/isafw_kcalog"
+log = "/internal/isafw_kca_log"
 
 class ISA_KCA():    
     initialized = False
