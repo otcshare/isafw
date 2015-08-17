@@ -1,0 +1,19 @@
+Report for image: TestImage
+With rootfs location at ./fsa_plugin/data/rootfs
+
+File: /file1 mode: 0100777 uid: 1000 gid: 1000
+File: /file3 mode: 0102664 uid: 1000 gid: 0
+File: /file7 mode: 0100664 uid: 1000 gid: 1000
+File: /file9 mode: 0100664 uid: 1000 gid: 1000
+File: /file8 mode: 0100664 uid: 1000 gid: 1000
+File: /file2 mode: 0104775 uid: 0 gid: 1000
+File: /file6 mode: 0100664 uid: 1000 gid: 1000
+File: /file4 mode: 0102775 uid: 1000 gid: 1000
+File: /file5 mode: 0100664 uid: 1000 gid: 1000
+File: /file11 mode: 0100664 uid: 1000 gid: 1000
+File: /file10 mode: 0100557 uid: 1000 gid: 1000
+File: /dir2 mode: 040777 uid: 1000 gid: 1000
+File: /dir2/file22 mode: 0104664 uid: 0 gid: 1000
+File: /dir2/dir22 mode: 040775 uid: 1000 gid: 1000
+File: /dir3 mode: 040775 uid: 1000 gid: 1000
+File: /dir1 mode: 041777 uid: 1000 gid: 1000

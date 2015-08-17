@@ -1,0 +1,140 @@
+Report for image: TestImage
+With the kernel conf at: ./kca_plugin/data/config
+
+Hardening options that need improvement:
+
+Actual value:
+CONFIG_CC_STACKPROTECTOR : not set
+Recommended value:
+CONFIG_CC_STACKPROTECTOR : y
+
+Actual value:
+CONFIG_DEBUG_FS : y
+Recommended value:
+CONFIG_DEBUG_FS : n
+
+Actual value:
+CONFIG_DEBUG_KERNEL : y
+Recommended value:
+CONFIG_DEBUG_KERNEL : n
+
+Actual value:
+CONFIG_DEBUG_STACKOVERFLOW : not set
+Recommended value:
+CONFIG_DEBUG_STACKOVERFLOW : y
+
+Actual value:
+CONFIG_DEFAULT_MMAP_MIN_ADDR : 4096
+Recommended value:
+CONFIG_DEFAULT_MMAP_MIN_ADDR : 65536
+
+Actual value:
+CONFIG_DEVKMEM : y
+Recommended value:
+CONFIG_DEVKMEM : n
+
+Actual value:
+CONFIG_IKCONFIG_PROC : y
+Recommended value:
+CONFIG_IKCONFIG_PROC : n
+
+Actual value:
+CONFIG_MODULE_SIG_FORCE : not set
+Recommended value:
+CONFIG_MODULE_SIG_FORCE : y
+
+Actual value:
+CONFIG_PROC_KCORE : y
+Recommended value:
+CONFIG_PROC_KCORE : n
+
+Actual value:
+CONFIG_RANDOMIZE_BASE : not set
+Recommended value:
+CONFIG_RANDOMIZE_BASE : y
+
+Actual value:
+CONFIG_RANDOMIZE_BASE_MAX_OFFSET : not set
+Recommended value:
+CONFIG_RANDOMIZE_BASE_MAX_OFFSET : 0x20000000,0x40000000
+
+Actual value:
+CONFIG_SECURITY_DMESG_RESTRICT : not set
+Recommended value:
+CONFIG_SECURITY_DMESG_RESTRICT : y
+
+Actual value:
+CONFIG_STRICT_DEVMEM : not set
+Recommended value:
+CONFIG_STRICT_DEVMEM : y
+
+Actual value:
+CONFIG_X86_MSR : y
+Recommended value:
+CONFIG_X86_MSR : n
+
+Key-related options that need improvement:
+
+Actual value:
+CONFIG_KEYS_DEBUG_PROC_KEYS : y
+Recommended value:
+CONFIG_KEYS_DEBUG_PROC_KEYS : n
+
+Security options that need improvement:
+
+Actual value:
+CONFIG_INTEL_TXT : not set
+Recommended value:
+CONFIG_INTEL_TXT : y
+
+Actual value:
+CONFIG_LSM_MMAP_MIN_ADDR : not set
+Recommended value:
+CONFIG_LSM_MMAP_MIN_ADDR : 65536
+
+Actual value:
+CONFIG_SECURITY_NETWORKING : not set
+Recommended value:
+CONFIG_SECURITY_NETWORKING : y
+
+Actual value:
+CONFIG_SECURITY_YAMA : not set
+Recommended value:
+CONFIG_SECURITY_YAMA : y
+
+Actual value:
+CONFIG_SECURITY_YAMA_STACKED : not set
+Recommended value:
+CONFIG_SECURITY_YAMA_STACKED : y
+
+Integrity options that need improvement:
+
+Actual value:
+CONFIG_IMA_APPRAISE_SIGNED_INIT : not set
+Recommended value:
+CONFIG_IMA_APPRAISE_SIGNED_INIT : y
+
+Actual value:
+CONFIG_IMA_DEFAULT_HASH_SHA1 : y
+Recommended value:
+CONFIG_IMA_DEFAULT_HASH_SHA1 : not set
+
+Actual value:
+CONFIG_IMA_DEFAULT_HASH_SHA256 : not set
+Recommended value:
+CONFIG_IMA_DEFAULT_HASH_SHA256 : y
+
+Actual value:
+CONFIG_IMA_DEFAULT_HASH_SHA512 : not set
+Recommended value:
+CONFIG_IMA_DEFAULT_HASH_SHA512 : y
+
+Actual value:
+CONFIG_IMA_LSM_RULES : not set
+Recommended value:
+CONFIG_IMA_LSM_RULES : y
+
+Actual value:
+CONFIG_INTEGRITY_AUDIT : not set
+Recommended value:
+CONFIG_INTEGRITY_AUDIT : y
