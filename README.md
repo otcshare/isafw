@@ -39,5 +39,5 @@ License
 -------
 
 ISA FW and its plugins are available under the terms of the BSD 3-Clause License. Please check the LICENSE file for further details.
-
+The integration of ISA FW is licensed under the license specified in each corresponding file under integration folder.
 Copyright (C) 2015 Intel Corporation
