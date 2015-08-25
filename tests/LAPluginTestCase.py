@@ -70,7 +70,6 @@ class TestLAPlugin(unittest.TestCase):
 	self.imageSecurityAnalyser.process_package(pkg)		
 	with open(reportdir + "/license_report", 'r') as freport:
             output = freport.readline()
-	    print(output)
 	# if bad licenses exist a report listing them is created
         self.assertEqual(output, 
                         "bash: BadLicense-1.1\n",
